@@ -1,4 +1,5 @@
 import java.util.Arrays;
+import java.util.Random;
 
 /**
  * Een deck met Cards
@@ -21,6 +22,10 @@ public class Deck {
 	 * harten en ruiten.
 	 */
 	public void fillDeck() {
+		cardArray = new Card[52];
+		for (int i=0 ; i <52 ; i++){
+			cardArray[i] = new Card(i);
+		}
 	}
 
 	/**
@@ -34,6 +39,8 @@ public class Deck {
 	 *            Op positie
 	 */
 	public void insertAt(Card card, int index) {
+		if (index >= cardArray.length || index < 0){ throw new ArrayIndexOutOfBoundsException();}
+		cardArray = this.addElement(cardArray, card, index);
 	}
 
 	/**
@@ -45,6 +52,8 @@ public class Deck {
 	 * @param index
 	 */
 	public void delete(int index) {
+		if (index >= cardArray.length || index < 0){ throw new ArrayIndexOutOfBoundsException();}
+		cardArray = this.removeElement(cardArray, index);
 	}
 
 	/**
@@ -53,6 +62,16 @@ public class Deck {
 	 * 
 	 */
 	public void shuffle() {
+		Random rand = new Random();
+		for (int i=0 ; i <52 ; i++){
+			int nr = rand.nextInt(52);
+			Card tempCard = cardArray[nr];
+			int nr2 = rand.nextInt(52);
+			cardArray[nr] = cardArray[nr2];
+			cardArray[nr2] = tempCard;
+			
+		}
+		
 	}
 
 	/**
@@ -64,7 +83,14 @@ public class Deck {
 	 * @return De index van de gevonden kaart
 	 */
 	public int sequentialSearch(Card card) {
-		return 0;
+		for (int i =0; i < cardArray.length; i++)
+        {
+            if (cardArray[i].compareTo(card) == 0)
+            {
+                return i;
+            }
+        }
+		throw new ArrayIndexOutOfBoundsException("Card not found");
 	}
 
 	/**
@@ -72,6 +98,7 @@ public class Deck {
 	 * als de volgorde hetzelfde is als na {@link #fillDeck()}
 	 */
 	public void sort() {
+		Arrays.sort(cardArray);
 	}
 
 	/**
@@ -83,11 +110,11 @@ public class Deck {
 	 * @return De index van de gevonden kaart
 	 */
 	public int binarySearch(Card card) {
-		return 0;
+		this.sort();
+		return Arrays.binarySearch(cardArray,card);
+
 	}
 
-	
-	
 	/**
 	 *  Pretty-print het deck.
 	 */
@@ -96,9 +123,22 @@ public class Deck {
 		String str = "";
 		
 		for(int i=0; i<cardArray.length;i++){
-			str += cardArray[i];
+			str += "\n"+ i + ": " + cardArray[i];
 		}
 		return str;
 		
+	}
+	private Card[] removeElement(Card[] original, int index){
+		Card[] n = new Card[original.length - 1];
+        System.arraycopy(original, 0, n, 0, index);
+        System.arraycopy(original, (index+1), n, index, ((original.length-index)-1) );
+        return n;
+	}
+	private Card[] addElement(Card[] original, Card element, int index){
+		Card[] n = new Card[original.length + 1];
+        System.arraycopy(original, 0, n, 0, index);
+        n[index] = element;
+        System.arraycopy(original, index, n, index + 1, original.length - index);
+	    return n;
 	}
 }
